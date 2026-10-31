@@ -1,0 +1,21 @@
+[project]
+name = "cs-assistant-backend"
+version = "0.1.0"
+description = "Backend ของ CS Assistant — ผู้ช่วย AI สำหรับทีมดูแลลูกค้า"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi[standard]>=0.115",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = [
+    "ollama: เทสต์ที่เรียก Ollama จริง (รันด้วย pytest -m ollama)",
+]
+addopts = "-m 'not ollama'"
