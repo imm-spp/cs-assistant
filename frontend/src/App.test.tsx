@@ -8,14 +8,20 @@ afterEach(() => {
 
 describe('App', () => {
   it('แสดงว่าเชื่อมต่อแล้ว เมื่อ backend ตอบ ok', async () => {
+    // App เรียกทั้ง /api/health และ /api/customers จึงตอบตาม URL
     vi.stubGlobal(
       'fetch',
-      vi.fn().mockResolvedValue(new Response(JSON.stringify({ status: 'ok' }))),
+      vi.fn((url: string) =>
+        Promise.resolve(
+          new Response(JSON.stringify(url === '/api/health' ? { status: 'ok' } : [])),
+        ),
+      ),
     )
 
     render(<App />)
 
     expect(await screen.findByText(/เชื่อมต่อแล้ว/)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'รายชื่อลูกค้า' })).toBeInTheDocument()
   })
 
   it('แสดงว่าเชื่อมต่อไม่ได้ เมื่อเรียก backend ไม่สำเร็จ', async () => {

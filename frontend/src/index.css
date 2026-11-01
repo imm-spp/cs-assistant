@@ -14,3 +14,85 @@ main {
   margin: 0 auto;
   padding: 2rem 1rem;
 }
+
+.status {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.search {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.search input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.search button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  font: inherit;
+  cursor: pointer;
+}
+
+.search button:hover {
+  background: #1d4ed8;
+}
+
+.count {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
+  font-size: 0.9rem;
+}
+
+th,
+td {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  background: #f1f5f9;
+  font-weight: 600;
+}
+
+tbody tr:hover {
+  background: #f8fafc;
+}
+
+.tier {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  background: #e5e7eb;
+}
+
+.tier-premium {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.tier-enterprise {
+  background: #ede9fe;
+  color: #5b21b6;
+}
