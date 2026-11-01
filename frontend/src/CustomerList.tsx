@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { fetchCustomers, type Customer } from './api'
+import CustomerSummary from './CustomerSummary'
 
 const TIER_LABELS: Record<string, string> = {
   standard: 'Standard',
@@ -14,6 +15,8 @@ function CustomerList() {
   const [searchInput, setSearchInput] = useState('')
   // คำค้นที่ใช้จริง จะเปลี่ยนเมื่อกดปุ่มค้นหาเท่านั้น
   const [search, setSearch] = useState('')
+  // ลูกค้าที่กำลังดูสรุปอยู่ (null = ไม่ได้เปิด)
+  const [selected, setSelected] = useState<Customer | null>(null)
 
   useEffect(() => {
     // กันไม่ให้ผลลัพธ์เก่าที่ตอบกลับมาช้ามาทับผลลัพธ์ใหม่
@@ -59,6 +62,14 @@ function CustomerList() {
         <button type="submit">ค้นหา</button>
       </form>
 
+      {selected && (
+        <CustomerSummary
+          key={selected.id}
+          customer={selected}
+          onClose={() => setSelected(null)}
+        />
+      )}
+
       {loading && <p>กำลังโหลด...</p>}
       {!loading && error && <p role="alert">โหลดรายชื่อลูกค้าไม่สำเร็จ</p>}
       {!loading && !error && customers.length === 0 && <p>ไม่พบลูกค้า</p>}
@@ -74,6 +85,9 @@ function CustomerList() {
                 <th>อีเมล</th>
                 <th>เบอร์โทร</th>
                 <th>ระดับ</th>
+                <th>
+                  <span className="visually-hidden">AI</span>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -87,6 +101,16 @@ function CustomerList() {
                     <span className={`tier tier-${customer.tier}`}>
                       {TIER_LABELS[customer.tier] ?? customer.tier}
                     </span>
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      className="small"
+                      aria-label={`สรุป ${customer.name}`}
+                      onClick={() => setSelected(customer)}
+                    >
+                      สรุป
+                    </button>
                   </td>
                 </tr>
               ))}

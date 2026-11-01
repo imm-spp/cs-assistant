@@ -11,8 +11,8 @@ export type Customer = {
   created_at: string
 }
 
-async function getJson<T>(url: string): Promise<T> {
-  const response = await fetch(url)
+async function getJson<T>(url: string, init?: RequestInit): Promise<T> {
+  const response = init ? await fetch(url, init) : await fetch(url)
   if (!response.ok) {
     throw new Error(`HTTP ${response.status}`)
   }
@@ -29,4 +29,12 @@ export async function fetchCustomers(search = ''): Promise<Customer[]> {
   const query = search.trim()
   const url = query ? `/api/customers?q=${encodeURIComponent(query)}` : '/api/customers'
   return getJson<Customer[]>(url)
+}
+
+// ให้ AI สรุปลูกค้า (ใช้เวลาหลายวินาทีถ้าใช้ Ollama ในเครื่อง)
+export async function summarizeCustomer(customerId: number): Promise<string> {
+  const data = await getJson<{ summary: string }>(`/api/ai/customers/${customerId}/summary`, {
+    method: 'POST',
+  })
+  return data.summary
 }
