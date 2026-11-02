@@ -35,6 +35,7 @@ frontend/src/
 - backend test:         `cd backend && uv run pytest`
 - เทสต์กับ Ollama จริง:  `cd backend && uv run pytest -m ollama`
 - seed ข้อมูล:           `cd backend && uv run python -m seed`
+- นำเอกสารเข้า RAG:      `cd backend && uv run python -m app.rag.ingest` (ต้องเปิด Ollama)
 - frontend dev:         `cd frontend && npm run dev`
 - frontend test:        `cd frontend && npm test`
 
