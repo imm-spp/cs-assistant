@@ -20,9 +20,9 @@
 backend/app/
   main.py, config.py, db.py, models.py
   routers/     # customers, ai, rag
-  services/    # business logic (summary, draft)
+  services/    # business logic (summary, draft, qa)
   llm/         # base.py (LLMProvider), ollama.py, cloud.py, fake.py, factory.py
-  rag/         # chunking, embedding, retrieval
+  rag/         # chunking, embedding, ingest, retrieval
 backend/tests/
 backend/seed/  # สร้าง mock customers
 docs/mock-kb/  # เอกสาร mock สำหรับ RAG
@@ -41,7 +41,7 @@ frontend/src/
 
 ## Config (.env, ดูตัวอย่างใน .env.example)
 - `LLM_PROVIDER=ollama | cloud | fake`
-- `OLLAMA_BASE_URL`, `OLLAMA_CHAT_MODEL=qwen2.5:7b`, `OLLAMA_EMBED_MODEL=bge-m3`
+- `OLLAMA_BASE_URL`, `OLLAMA_CHAT_MODEL` (qwen2.5:3b หรือ qwen2.5:7b), `OLLAMA_EMBED_MODEL=bge-m3`
 - `ANTHROPIC_API_KEY`, `CLOUD_CHAT_MODEL`
 - `DATABASE_URL`, `TEST_DATABASE_URL`
 
