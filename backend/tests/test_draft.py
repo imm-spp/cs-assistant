@@ -114,3 +114,13 @@ def test_draft_llm_error_returns_502(client: TestClient, session: Session) -> No
     response = client.post(f"/api/ai/customers/{customer.id}/draft", json={"instruction": "hi"})
 
     assert response.status_code == 502
+
+
+def test_prompt_only_includes_greeting_rules_for_chosen_language() -> None:
+    customer = Customer(name="Alice Mock", email="a@example.com", phone="1", company="Globex")
+
+    thai = build_draft_prompt(customer, "hi", "th")
+    english = build_draft_prompt(customer, "hi", "en")
+
+    assert "เรียน คุณAlice Mock" in thai and "Dear" not in thai
+    assert "Dear Alice Mock," in english and "ทีมดูแลลูกค้า" not in english

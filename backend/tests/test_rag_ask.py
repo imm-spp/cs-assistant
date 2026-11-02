@@ -11,7 +11,13 @@ from app.main import app
 from app.rag.embedding import FakeEmbedder, get_embedder
 from app.rag.ingest import ingest_documents
 from app.rag.retrieval import search_chunks
-from app.services.qa import NO_DOCUMENTS_ANSWER, QA_SYSTEM_PROMPT
+from app.services.qa import (
+    MIN_SCORE,
+    NO_DOCUMENTS_ANSWER,
+    NOT_FOUND_ANSWER,
+    QA_SYSTEM_PROMPT,
+    build_qa_prompt,
+)
 
 # FakeEmbedder จับคู่จากคำที่เหมือนกัน จึงใช้คำภาษาอังกฤษแยกชัด ๆ ในเอกสารทดสอบ
 DOCS = {
@@ -63,6 +69,28 @@ def test_ask_returns_answer_and_sources(
     assert system == QA_SYSTEM_PROMPT
     assert "[เอกสาร 1: login.md]" in user
     assert "คำถาม: password reset link expires?" in user
+    assert "ตอบเป็นภาษา: English" in user
+    # ส่งให้ LLM เฉพาะชิ้นที่คะแนนผ่านเกณฑ์
+    assert all(source["score"] >= MIN_SCORE for source in data["sources"])
+
+
+def test_ask_unrelated_question_skips_llm(
+    client: TestClient, session: Session, docs_dir: Path, fake_llm: FakeProvider
+) -> None:
+    ingest_documents(session, FakeEmbedder(), docs_dir)
+
+    response = client.post("/api/rag/ask", json={"question": "tom yum soup recipe"})
+
+    assert response.json() == {"answer": NOT_FOUND_ANSWER, "sources": []}
+    assert fake_llm.calls == []
+
+
+@pytest.mark.parametrize(
+    ("question", "language"),
+    [("ลืมรหัสผ่านทำยังไง", "ภาษาไทย"), ("How do I reset it?", "English")],
+)
+def test_qa_prompt_tells_model_which_language(question: str, language: str) -> None:
+    assert f"ตอบเป็นภาษา: {language}" in build_qa_prompt(question, [])
 
 
 def test_ask_without_documents_does_not_call_llm(

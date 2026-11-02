@@ -8,7 +8,12 @@ from app.llm import LLMError, get_llm
 from app.llm.fake import FakeProvider
 from app.main import app
 from app.models import Customer
-from app.services.summary import SUMMARY_SYSTEM_PROMPT, build_customer_prompt
+from app.services.summary import (
+    SUMMARY_SYSTEM_PROMPT,
+    build_customer_prompt,
+    clean_bullets,
+    summarize_customer,
+)
 
 
 class FailingProvider(FakeProvider):
@@ -18,7 +23,7 @@ class FailingProvider(FakeProvider):
 
 @pytest.fixture
 def fake_llm() -> Iterator[FakeProvider]:
-    llm = FakeProvider(reply="  - ลูกค้า enterprise ควรดูแลพิเศษ  ")
+    llm = FakeProvider(reply="  - Somchai Test จาก Acme  ")
     app.dependency_overrides[get_llm] = lambda: llm
     yield llm
     # client fixture จะล้าง dependency_overrides ทั้งหมดให้ตอนจบ
@@ -46,8 +51,29 @@ def test_prompt_includes_customer_details() -> None:
 
     prompt = build_customer_prompt(customer)
 
-    for text in ["Alice Mock", "Globex", "a@example.com", "premium", "(ไม่มี)"]:
+    for text in ["Alice Mock", "Globex", "premium", "(ไม่มี)"]:
         assert text in prompt
+    # ไม่ส่งข้อมูลติดต่อที่ไม่จำเป็นต่อการสรุปให้ LLM
+    assert "a@example.com" not in prompt
+
+
+@pytest.mark.parametrize(
+    ("tier", "has_warning"),
+    [("standard", False), ("premium", True), ("enterprise", True)],
+)
+def test_code_adds_vip_warning_not_the_model(tier: str, has_warning: bool) -> None:
+    customer = Customer(name="A", email="a@example.com", phone="1", company="B", tier=tier)
+
+    summary = summarize_customer(customer, FakeProvider(reply="- A จากบริษัท B"))
+
+    assert summary.startswith("- A จากบริษัท B")
+    assert ("ควรดูแลเป็นพิเศษ" in summary) is has_warning
+
+
+def test_clean_bullets_fixes_doubled_markers() -> None:
+    messy = "- -ชื่อ: A\n* ประเด็นหนึ่ง\n\n•  ประเด็นสอง\n-"
+
+    assert clean_bullets(messy) == "- ชื่อ: A\n- ประเด็นหนึ่ง\n- ประเด็นสอง"
 
 
 def test_summary_endpoint_returns_llm_reply(
@@ -60,7 +86,7 @@ def test_summary_endpoint_returns_llm_reply(
     assert response.status_code == 200
     assert response.json() == {
         "customer_id": customer.id,
-        "summary": "- ลูกค้า enterprise ควรดูแลพิเศษ",
+        "summary": "- Somchai Test จาก Acme\n- ⚠️ ลูกค้าระดับ enterprise ควรดูแลเป็นพิเศษ",
     }
     system, user = fake_llm.calls[0]
     assert system == SUMMARY_SYSTEM_PROMPT
