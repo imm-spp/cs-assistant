@@ -230,3 +230,86 @@ td.actions button + button {
 .draft-result button {
   align-self: flex-start;
 }
+
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin: 1rem 0 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tabs button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: #6b7280;
+  font: inherit;
+  cursor: pointer;
+}
+
+.tabs button[aria-pressed='true'] {
+  border-bottom-color: #2563eb;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.hint {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.search button:disabled {
+  background: #93c5fd;
+  cursor: not-allowed;
+}
+
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.answer {
+  padding: 1rem 1.25rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+}
+
+.answer h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.answer h3 + .summary-text {
+  margin-top: 0;
+}
+
+.sources {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.sources summary {
+  cursor: pointer;
+}
+
+.sources pre {
+  margin: 0.5rem 0;
+  padding: 0.75rem;
+  border-radius: 6px;
+  background: #f8fafc;
+  font: inherit;
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+}
+
+.score {
+  color: #6b7280;
+  font-size: 0.8rem;
+}

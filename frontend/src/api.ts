@@ -54,3 +54,23 @@ export async function draftMessage(
   })
   return data.draft
 }
+
+export type AskSource = {
+  source: string
+  content: string
+  score: number
+}
+
+export type AskResult = {
+  answer: string
+  sources: AskSource[]
+}
+
+// ถามคำถามจากเอกสารใน docs/mock-kb (RAG)
+export async function askDocs(question: string): Promise<AskResult> {
+  return getJson<AskResult>('/api/rag/ask', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ question }),
+  })
+}

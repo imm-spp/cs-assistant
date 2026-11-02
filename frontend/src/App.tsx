@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
 import { fetchHealth } from './api'
+import AskDocs from './AskDocs'
 import CustomerList from './CustomerList'
 
 type BackendStatus = 'loading' | 'ok' | 'error'
+type Tab = 'customers' | 'docs'
 
 function App() {
   const [status, setStatus] = useState<BackendStatus>('loading')
+  const [tab, setTab] = useState<Tab>('customers')
 
   useEffect(() => {
     fetchHealth()
@@ -26,7 +29,21 @@ function App() {
         </p>
       </header>
 
-      <CustomerList />
+      <nav className="tabs" aria-label="เมนู">
+        <button
+          type="button"
+          aria-pressed={tab === 'customers'}
+          onClick={() => setTab('customers')}
+        >
+          ลูกค้า
+        </button>
+        <button type="button" aria-pressed={tab === 'docs'} onClick={() => setTab('docs')}>
+          ถามจากเอกสาร
+        </button>
+      </nav>
+
+      {tab === 'customers' && <CustomerList />}
+      {tab === 'docs' && <AskDocs />}
     </main>
   )
 }
