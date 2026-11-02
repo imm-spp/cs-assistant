@@ -1,6 +1,10 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { fetchCustomers, type Customer } from './api'
+import CustomerDraft from './CustomerDraft'
 import CustomerSummary from './CustomerSummary'
+
+// กล่องที่เปิดอยู่: สรุปลูกค้า หรือ ร่างข้อความ
+type Panel = { kind: 'summary' | 'draft'; customer: Customer }
 
 const TIER_LABELS: Record<string, string> = {
   standard: 'Standard',
@@ -15,8 +19,8 @@ function CustomerList() {
   const [searchInput, setSearchInput] = useState('')
   // คำค้นที่ใช้จริง จะเปลี่ยนเมื่อกดปุ่มค้นหาเท่านั้น
   const [search, setSearch] = useState('')
-  // ลูกค้าที่กำลังดูสรุปอยู่ (null = ไม่ได้เปิด)
-  const [selected, setSelected] = useState<Customer | null>(null)
+  // กล่องที่กำลังเปิดอยู่ (null = ไม่ได้เปิด)
+  const [panel, setPanel] = useState<Panel | null>(null)
 
   useEffect(() => {
     // กันไม่ให้ผลลัพธ์เก่าที่ตอบกลับมาช้ามาทับผลลัพธ์ใหม่
@@ -62,11 +66,18 @@ function CustomerList() {
         <button type="submit">ค้นหา</button>
       </form>
 
-      {selected && (
+      {panel?.kind === 'summary' && (
         <CustomerSummary
-          key={selected.id}
-          customer={selected}
-          onClose={() => setSelected(null)}
+          key={panel.customer.id}
+          customer={panel.customer}
+          onClose={() => setPanel(null)}
+        />
+      )}
+      {panel?.kind === 'draft' && (
+        <CustomerDraft
+          key={panel.customer.id}
+          customer={panel.customer}
+          onClose={() => setPanel(null)}
         />
       )}
 
@@ -102,14 +113,22 @@ function CustomerList() {
                       {TIER_LABELS[customer.tier] ?? customer.tier}
                     </span>
                   </td>
-                  <td>
+                  <td className="actions">
                     <button
                       type="button"
                       className="small"
                       aria-label={`สรุป ${customer.name}`}
-                      onClick={() => setSelected(customer)}
+                      onClick={() => setPanel({ kind: 'summary', customer })}
                     >
                       สรุป
+                    </button>
+                    <button
+                      type="button"
+                      className="small"
+                      aria-label={`ร่างข้อความ ${customer.name}`}
+                      onClick={() => setPanel({ kind: 'draft', customer })}
+                    >
+                      ร่างข้อความ
                     </button>
                   </td>
                 </tr>

@@ -154,3 +154,79 @@ button.secondary {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+td.actions {
+  white-space: nowrap;
+}
+
+td.actions button + button {
+  margin-left: 0.4rem;
+}
+
+.draft-form,
+.draft-result {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.draft-form label,
+.draft-result label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.draft-form textarea,
+.draft-result textarea {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font: inherit;
+  font-weight: normal;
+  resize: vertical;
+}
+
+.draft-form fieldset {
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.draft-form fieldset legend {
+  float: left;
+  margin-right: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.draft-form fieldset label {
+  flex-direction: row;
+  align-items: center;
+  font-weight: normal;
+}
+
+.draft-form button[type='submit'] {
+  align-self: flex-start;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  font: inherit;
+  cursor: pointer;
+}
+
+.draft-form button[type='submit']:disabled {
+  background: #93c5fd;
+  cursor: not-allowed;
+}
+
+.draft-result button {
+  align-self: flex-start;
+}

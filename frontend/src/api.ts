@@ -38,3 +38,19 @@ export async function summarizeCustomer(customerId: number): Promise<string> {
   })
   return data.summary
 }
+
+export type DraftLanguage = 'th' | 'en'
+
+// ให้ AI ร่างข้อความถึงลูกค้าตามคำสั่ง (instruction) เป็นภาษาไทยหรืออังกฤษ
+export async function draftMessage(
+  customerId: number,
+  instruction: string,
+  language: DraftLanguage,
+): Promise<string> {
+  const data = await getJson<{ draft: string }>(`/api/ai/customers/${customerId}/draft`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ instruction, language }),
+  })
+  return data.draft
+}
